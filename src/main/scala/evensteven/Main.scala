@@ -1,6 +1,6 @@
 package evensteven
 
-object Pit3{  
+object Evensteven {
   def main(args: Array[String]) {
     println("Hello EvenSteven")
   }
