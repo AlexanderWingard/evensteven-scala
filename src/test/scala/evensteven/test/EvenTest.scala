@@ -35,5 +35,13 @@ class EvenTest extends Spec with ShouldMatchers {
       bill.subSplits.head.splitters should have size (2)
       bill.payments.head.splitters should have size (1)
     }
+    it ("should parse names correctly") {
+      val bill = result.head
+      val splitters = bill.split.get.splitters
+      splitters should contain ("Alex")
+      splitters should contain ("Lasse")
+      splitters should contain ("Stefan")
+      splitters should contain ("Christian")
+    }
   }
 }
