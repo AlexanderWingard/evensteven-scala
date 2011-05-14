@@ -16,7 +16,7 @@ object Evensteven {
 	case billRegexp(name) =>
 	  Bill(name) :: bills
 	case splitRegexp(kind, amount, splitters, comment) =>
-	  val split = Split(splitters.split(",").toList, amount.toInt)
+	  val split = Split(splitters.split(",").map(_.trim).toList, amount.toInt)
 	  val bill :: tail = bills
 	  kind match {
 	    case "" =>
@@ -35,6 +35,13 @@ object Evensteven {
 
 case class Bill(name : String, split : Option[Split] = None, subSplits : List[Split] = List(), payments : List[Split] = List())
 
-case class Split(splitters : List[String], amount : Number)
+case class Split(splitters : List[String], amount : Float) {
+  def split = {
+    val splitAmount = amount / splitters.length
+    splitters.foldLeft(Map() : Map[String, Float]) { (acc, splitter) =>
+      acc + (splitter -> splitAmount)
+    }
+  }
+}
 
-case class Transfer(from : String, to : String, amount : Number)
+case class Transfer(from : String, to : String, amount : Float)
