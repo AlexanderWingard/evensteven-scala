@@ -19,7 +19,7 @@ object Evensteven {
 	  Bill(name) :: entities
 	case splitRegexp(kind, amount, splitters, comment) =>
 	  val splitSplitters = splitters.split(",").map(_.trim).toList
-	  val (head :: tail, prefix) = entities.partition(_.isInstanceOf[Bill])
+	  val (prefix, head :: tail) = entities.span(!_.isInstanceOf[Bill])
 	  val bill = head.asInstanceOf[Bill]
 	  val newBill =
 	  kind match {
@@ -36,7 +36,7 @@ object Evensteven {
 	case other =>
 	  entities
       }
-    }
+    }.reverse
   }
 }
 

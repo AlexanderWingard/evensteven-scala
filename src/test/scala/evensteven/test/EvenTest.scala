@@ -8,6 +8,8 @@ import scala.io.Source
 import evensteven._
 
 class EvenTest extends Spec with ShouldMatchers {
+
+  describe ("A bill") {
   val example =
 """
 * Matkasse
@@ -16,13 +18,6 @@ class EvenTest extends Spec with ShouldMatchers {
   -20 Alex, Lasse // Två glassar
   +100 Lasse
 """;
-  val transferExample =
-"""
-  >20 Alex Jeppe
-""";
-
-  describe ("A bill") {
-
     val bill = Evensteven.parse(Source.fromString(example)).head.asInstanceOf[Bill]
     val result = Result() + bill
 
@@ -58,11 +53,37 @@ class EvenTest extends Spec with ShouldMatchers {
     }
   }
   describe("A transfer") {
+  val transferExample =
+"""
+  >20 Alex Jeppe
+""";
     val transfer = Evensteven.parse(Source.fromString(transferExample)).head.asInstanceOf[Transfer]
     it("Should parse a transfer correctly") {
       transfer.from should equal ("Alex")
       transfer.to should equal ("Jeppe")
       transfer.amount should equal (20)
+    }
+  }
+  describe("A bigger example") {
+    val example =
+"""
+* Mat
+  100 Alex, Malin
+* Boende
+  100 Alex, Malin
+>20 Malin Alex
+* Bil
+  100 Alex, Malin
+""";
+    val result = Evensteven.parse(Source.fromString(example))
+    it("should parse two bills") {
+      result should have length (4)
+    }
+    it("should return correct order") {
+      result(0).asInstanceOf[Bill].name should equal ("Mat")
+      result(1).asInstanceOf[Bill].name should equal ("Boende")
+      result(2).asInstanceOf[Transfer].amount should equal (20)
+      result(3).asInstanceOf[Bill].name should equal ("Bil")
     }
   }
 }
