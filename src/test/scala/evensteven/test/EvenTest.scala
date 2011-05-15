@@ -19,8 +19,7 @@ class EvenTest extends Spec with ShouldMatchers {
   +100 Lasse
 """;
     val bill = Evensteven.parse(Source.fromString(example)).head.asInstanceOf[Bill]
-    val result = Result() + bill
-
+    val result = bill.even
     it("should parse title correctly") {
       bill.name should equal ("Matkasse")
     }
@@ -37,10 +36,10 @@ class EvenTest extends Spec with ShouldMatchers {
       splitters should contain ("Christian")
     }
     it("should calculate a bill correctly") {
-      result.total("Stefan") should equal (-20)
-      result.total("Christian") should equal (-20)
-      result.total("Lasse") should equal (70)
-      result.total("Alex") should equal (-30)
+      result("Stefan") should equal (-20)
+      result("Christian") should equal (-20)
+      result("Lasse") should equal (70)
+      result("Alex") should equal (-30)
     }
   }
   describe  ("A split") {

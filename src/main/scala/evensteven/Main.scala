@@ -40,9 +40,26 @@ object Evensteven {
   }
 }
 
-abstract class EvenEntity
+abstract class EvenEntity {
+  def even : Map[String, Float]
 
-case class Bill(name : String, split : Option[Split] = None, subSplits : List[Split] = List(), payments : List[Split] = List()) extends EvenEntity
+  def mergeMaps(m1 : Map[String, Float], m2 : Map[String, Float]) = {
+    m1.foldLeft(m2.withDefaultValue(0f)) { (acc, pair) =>
+      acc(pair._1) += pair._2
+    }
+  }
+}
+
+case class Bill(name : String, split : Option[Split] = None, subSplits : List[Split] = List(), payments : List[Split] = List()) extends EvenEntity {
+
+  def even = {
+    val subSplitSum = subSplits.foldLeft(0f)(_ + _.amount)
+    val adjusted = split.get.copy(amount = split.get.amount - subSplitSum)
+    val allSplits = adjusted :: subSplits ++ payments
+
+    allSplits.foldLeft(Map() : Map[String, Float])((acc, split) => mergeMaps(acc, split.split))
+  }
+}
 
 case class Split(splitters : List[String], amount : Float) {
   def split = {
@@ -53,21 +70,8 @@ case class Split(splitters : List[String], amount : Float) {
   }
 }
 
-case class Transfer(from : String, to : String, amount : Float) extends EvenEntity
-
-case class Result(total : Map[String, Float] = Map()) {
-  def + (bill : Bill) = {
-    val subSplitSum = bill.subSplits.foldLeft(0f)(_ + _.amount)
-    val split = bill.split.get
-    val adjusted = split.copy(amount = split.amount - subSplitSum)
-    
-    val allSplits = adjusted :: bill.subSplits ++ bill.payments
-    
-    val res = allSplits.foldLeft(Map().withDefaultValue(0f) : Map[String, Float]) { (acc, split) =>
-      split.split.foldLeft(acc) { (acc, pair) =>
-	acc(pair._1) += pair._2
-       }
-    }
-    Result(res)
-  }
+case class Transfer(from : String, to : String, amount : Float) extends EvenEntity {
+  def even = Map((from -> amount), (to -> -amount))
 }
+
+case class Acc(result : Map[String, Float] = Map())
