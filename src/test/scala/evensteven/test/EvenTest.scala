@@ -19,25 +19,18 @@ class EvenTest extends Spec with ShouldMatchers {
 
   describe ("EvenSteven") {
 
-    val bills = Evensteven.parse(Source.fromString(example))
-    val result = Result() + bills.head
+    val bill = Evensteven.parse(Source.fromString(example)).head.asInstanceOf[Bill]
+    val result = Result() + bill
 
-    it("should parse one bill") {
-      bills should have length (1)
-    }
     it("should parse title correctly") {
-      val bill = bills.head
       bill.name should equal ("Matkasse")
     }
     it("should parse correct number of splitters") {
-      val bill = bills.head
-
       bill.split.get.splitters should have length (4)
       bill.subSplits.head.splitters should have size (2)
       bill.payments.head.splitters should have size (1)
     }
     it("should parse names correctly") {
-      val bill = bills.head
       val splitters = bill.split.get.splitters
       splitters should contain ("Alex")
       splitters should contain ("Lasse")

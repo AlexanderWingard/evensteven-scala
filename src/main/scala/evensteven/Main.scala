@@ -13,29 +13,34 @@ object Evensteven {
   }
 
   def parse(source : Source) = {
-    source.getLines().foldLeft(List() : List[Bill]) { (bills, line) =>
+    source.getLines().foldLeft(List() : List[EvenEntity]) { (entities, line) =>
       line match {
 	case billRegexp(name) =>
-	  Bill(name) :: bills
+	  Bill(name) :: entities
 	case splitRegexp(kind, amount, splitters, comment) =>
 	  val splitSplitters = splitters.split(",").map(_.trim).toList
-	  val bill :: tail = bills
+	  val (head :: tail, prefix) = entities.partition(_.isInstanceOf[Bill])
+	  val bill = head.asInstanceOf[Bill]
+	  val newBill =
 	  kind match {
 	    case "" =>
-	      bill.copy(split = Some(Split(splitSplitters, -amount.toFloat))) :: tail
+	      bill.copy(split = Some(Split(splitSplitters, -amount.toFloat)))
 	    case "-" =>
-	      bill.copy(subSplits = Split(splitSplitters, -amount.toFloat) :: bill.subSplits) :: tail
+	      bill.copy(subSplits = Split(splitSplitters, -amount.toFloat) :: bill.subSplits)
 	    case "+" =>
-	      bill.copy(payments = Split(splitSplitters, amount.toFloat) :: bill.payments) :: tail
+	      bill.copy(payments = Split(splitSplitters, amount.toFloat) :: bill.payments)
 	  }
+	  prefix ++ (newBill :: tail)
 	case other =>
-	  bills
+	  entities
       }
     }
   }
 }
 
-case class Bill(name : String, split : Option[Split] = None, subSplits : List[Split] = List(), payments : List[Split] = List())
+abstract class EvenEntity
+
+case class Bill(name : String, split : Option[Split] = None, subSplits : List[Split] = List(), payments : List[Split] = List()) extends EvenEntity
 
 case class Split(splitters : List[String], amount : Float) {
   def split = {
@@ -46,7 +51,7 @@ case class Split(splitters : List[String], amount : Float) {
   }
 }
 
-case class Transfer(from : String, to : String, amount : Float)
+case class Transfer(from : String, to : String, amount : Float) extends EvenEntity
 
 case class Result(total : Map[String, Float] = Map()) {
   def + (bill : Bill) = {
