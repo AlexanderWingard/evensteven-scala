@@ -6,6 +6,8 @@ import util.matching.Regex
 object Evensteven {
   val billRegexp = new Regex("""\*\s*(\S+)\s*""")
   val splitRegexp = new Regex("""\s*([\+-]*)(\d+)\s*([a-zA-Z,\s]+)(.*)""")
+  val transferRegexp = new Regex("""\s*>(\d+)\s+([a-zA-Z])[\s,]+([a-zA-Z])(.*)""")
+
   def main(args: Array[String]) = {
     println("Hello EvenSteven")
   }
