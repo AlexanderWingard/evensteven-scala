@@ -16,8 +16,12 @@ class EvenTest extends Spec with ShouldMatchers {
   -20 Alex, Lasse // Två glassar
   +100 Lasse
 """;
+  val transferExample =
+"""
+  >20 Alex Jeppe
+""";
 
-  describe ("EvenSteven") {
+  describe ("A bill") {
 
     val bill = Evensteven.parse(Source.fromString(example)).head.asInstanceOf[Bill]
     val result = Result() + bill
@@ -51,6 +55,14 @@ class EvenTest extends Spec with ShouldMatchers {
       val splitted = split.split
       splitted("Alex") should equal (50)
       splitted("Lars") should equal (50)
+    }
+  }
+  describe("A transfer") {
+    val transfer = Evensteven.parse(Source.fromString(transferExample)).head.asInstanceOf[Transfer]
+    it("Should parse a transfer correctly") {
+      transfer.from should equal ("Alex")
+      transfer.to should equal ("Jeppe")
+      transfer.amount should equal (20)
     }
   }
 }

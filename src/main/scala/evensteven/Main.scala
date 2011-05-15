@@ -6,7 +6,7 @@ import util.matching.Regex
 object Evensteven {
   val billRegexp = new Regex("""\*\s*(\S+)\s*""")
   val splitRegexp = new Regex("""\s*([\+-]*)(\d+)\s*([a-zA-Z,\s]+)(.*)""")
-  val transferRegexp = new Regex("""\s*>(\d+)\s+([a-zA-Z])[\s,]+([a-zA-Z])(.*)""")
+  val transferRegexp = new Regex("""\s*>(\d+)\s+([a-zA-Z]+)[\s,]+([a-zA-Z]+)(.*)""")
 
   def main(args: Array[String]) = {
     println("Hello EvenSteven")
@@ -31,6 +31,8 @@ object Evensteven {
 	      bill.copy(payments = Split(splitSplitters, amount.toFloat) :: bill.payments)
 	  }
 	  prefix ++ (newBill :: tail)
+	case transferRegexp(amount, from, to, comment) =>
+	  Transfer(from, to, amount.toFloat) :: entities
 	case other =>
 	  entities
       }
