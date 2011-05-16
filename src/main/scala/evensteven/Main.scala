@@ -43,6 +43,20 @@ object Evensteven {
   }
 }
 
+case class Result(res : Map[String, Float] = Map(), currency : Float = 1) {
+  def + (arg : EvenEntity) = {
+    arg match {
+      case newCurrency : Currency =>
+	this.copy(currency = newCurrency.factor)
+      case splittable : Splittable =>
+	val currencyAdjusted = splittable.even.mapValues(_ / currency)
+	val merged = splittable.mergeMaps(res, currencyAdjusted)
+	this.copy(res = merged)
+    }
+  }
+  def localRes = res.mapValues(_ * currency)
+}
+
 abstract class EvenEntity
 
 trait Splittable

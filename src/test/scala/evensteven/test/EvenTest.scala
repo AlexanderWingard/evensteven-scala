@@ -89,14 +89,21 @@ class EvenTest extends Spec with ShouldMatchers {
     val example =
 """
 * Mat
-  100 Alex, Malin // 50 each
-# 10 //
-* Boende
   100 Alex, Malin
+  +100 Alex
+# 2000
+* Boende
+  200000 Alex, Malin
+  +200000 Alex
 """
-    val result = Evensteven.parse(Source.fromString(example))
+    val parsed = Evensteven.parse(Source.fromString(example))
+    val result = parsed.foldLeft(Result())(_ + _)
     it("should parse correctly") {
-      result(1).asInstanceOf[Currency].factor should equal (10)
+      parsed(1).asInstanceOf[Currency].factor should equal (2000)
+    }
+    it("should calculated currency bills results correctly") {
+      result.res("Alex") should equal (100)
+      result.res("Malin") should equal (-100)
     }
   }
 }
