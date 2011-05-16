@@ -46,7 +46,7 @@ class EvenTest extends Spec with ShouldMatchers {
     val split = Split(List("Alex", "Lars"), 100)
 
     it("should work") {
-      val splitted = split.split
+      val splitted = split.even
       splitted("Alex") should equal (50)
       splitted("Lars") should equal (50)
     }
@@ -84,5 +84,15 @@ class EvenTest extends Spec with ShouldMatchers {
       result(2).asInstanceOf[Transfer].amount should equal (20)
       result(3).asInstanceOf[Bill].name should equal ("Bil")
     }
+  }
+  describe("Currencies") {
+    val example =
+"""
+* Mat
+  100 Alex, Malin // 50 each
+# 10 //
+* Boende
+  100 Alex, Malin
+"""
   }
 }
