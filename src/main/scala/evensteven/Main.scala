@@ -7,6 +7,7 @@ object Evensteven {
   val billRegexp = new Regex("""\*\s*(\S+)\s*""")
   val splitRegexp = new Regex("""\s*([\+-]*)(\d+)\s*([a-zA-Z,\s]+)(.*)""")
   val transferRegexp = new Regex("""\s*>(\d+)\s+([a-zA-Z]+)[\s,]+([a-zA-Z]+)(.*)""")
+  val currencyRegexp = new Regex("""#\s*(\d+)(.*)""")
 
   def main(args: Array[String]) = {
     println("Hello EvenSteven")
@@ -33,6 +34,8 @@ object Evensteven {
 	  prefix ++ (newBill :: tail)
 	case transferRegexp(amount, from, to, comment) =>
 	  Transfer(from, to, amount.toFloat) :: entities
+	case currencyRegexp(factor, comment) =>
+	  Currency(factor.toFloat) :: entities
 	case other =>
 	  entities
       }
@@ -76,5 +79,7 @@ case class Split(splitters : List[String], amount : Float) extends Splittable{
 case class Transfer(from : String, to : String, amount : Float) extends EvenEntity with Splittable {
   def even = Map((from -> amount), (to -> -amount))
 }
+
+case class Currency(factor : Float) extends EvenEntity
 
 case class Acc(result : Map[String, Float] = Map())

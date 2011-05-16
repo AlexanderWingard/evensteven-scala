@@ -94,5 +94,9 @@ class EvenTest extends Spec with ShouldMatchers {
 * Boende
   100 Alex, Malin
 """
+    val result = Evensteven.parse(Source.fromString(example))
+    it("should parse correctly") {
+      result(1).asInstanceOf[Currency].factor should equal (10)
+    }
   }
 }
