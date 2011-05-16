@@ -70,7 +70,7 @@ class EvenTest extends Spec with ShouldMatchers {
   100 Alex, Malin
 * Boende
   100 Alex, Malin
->20 Malin Alex
+> 20 Malin Alex
 * Bil
   100 Alex, Malin
 """;
