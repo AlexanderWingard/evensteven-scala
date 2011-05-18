@@ -17,3 +17,11 @@ $(document).ready(function() {
 
       });
    });
+
+function callSendEven() {
+    sendEven("sendEvenCallback", $("#input").val())
+}
+
+function sendEvenCallback(result) {
+    alert(result);
+}
