@@ -2,6 +2,8 @@ package code
 package snippet
 
 import net.liftweb._
+import net.liftweb.json._
+import net.liftweb.json.Serialization.write
 import http._
 import common._
 import util._
@@ -10,6 +12,10 @@ import JsCmds._
 import JE._
 
 import scala.xml.NodeSeq
+import scala.io.Source
+
+import evensteven._
+
 
 object XString {
   def unapply(in: Any): Option[String] = in match {
@@ -20,9 +26,12 @@ object XString {
 
 object EvenJsonHandler extends SessionVar[JsonHandler] (
   new JsonHandler {
+    implicit val formats = Serialization.formats(NoTypeHints)
+
     def apply(in : Any) : JsCmd = in match {
       case JsonCmd("sendEven", resp, XString(s), _) =>
-	Call(resp, s)
+	val result = Evensteven.parse(Source.fromString(s)).foldLeft(Result())(_ + _)
+	Call(resp, write(result.res))
       case _ => Noop
     }
   })
