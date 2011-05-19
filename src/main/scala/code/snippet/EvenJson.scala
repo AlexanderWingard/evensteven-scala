@@ -31,7 +31,7 @@ object EvenJsonHandler extends SessionVar[JsonHandler] (
     def apply(in : Any) : JsCmd = in match {
       case JsonCmd("sendEven", resp, XString(s), _) =>
 	val result = Evensteven.parse(Source.fromString(s)).foldLeft(Result())(_ + _)
-	Call(resp, write(result.res))
+	Call(resp, write(result.localRes))
       case _ => Noop
     }
   })

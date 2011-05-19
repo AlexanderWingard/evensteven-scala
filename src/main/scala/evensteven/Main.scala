@@ -4,10 +4,10 @@ import scala.io.Source
 import util.matching.Regex
 
 object Evensteven {
-  val billRegexp = new Regex("""\*\s*(\S+)\s*""")
-  val splitRegexp = new Regex("""\s*([\+-]*)(\d+)\s*([a-zA-Z,\s]+)(.*)""")
-  val transferRegexp = new Regex("""\s*>\s*(\d+)\s+([a-zA-Z]+)[\s,]+([a-zA-Z]+)(.*)""")
-  val currencyRegexp = new Regex("""#\s*(\d+)(.*)""")
+  val billRegexp = new Regex("""\*\s*(.+)\s*""")
+  val splitRegexp = new Regex("""\s*([\+-]*)([\d,]+)\s*([a-zA-Z,\s]+)(.*)""")
+  val transferRegexp = new Regex("""\s*>\s*([\d,]+)\s+([a-zA-Z]+)[\s,]+([a-zA-Z]+)(.*)""")
+  val currencyRegexp = new Regex("""#\s*([\d,]+)(.*)""")
 
   def main(args: Array[String]) = {
     println("Hello EvenSteven")
@@ -25,17 +25,17 @@ object Evensteven {
 	  val newBill =
 	  kind match {
 	    case "" =>
-	      bill.copy(split = Some(Split(splitSplitters, -amount.toFloat)))
+	      bill.copy(split = Some(Split(splitSplitters, -amount.replace(',','.').toFloat)))
 	    case "-" =>
-	      bill.copy(subSplits = Split(splitSplitters, -amount.toFloat) :: bill.subSplits)
+	      bill.copy(subSplits = Split(splitSplitters, -amount.replace(',','.').toFloat) :: bill.subSplits)
 	    case "+" =>
-	      bill.copy(payments = Split(splitSplitters, amount.toFloat) :: bill.payments)
+	      bill.copy(payments = Split(splitSplitters, amount.replace(',','.').toFloat) :: bill.payments)
 	  }
 	  prefix ++ (newBill :: tail)
 	case transferRegexp(amount, from, to, comment) =>
-	  Transfer(from, to, amount.toFloat) :: entities
+	  Transfer(from, to, amount.replace(',','.').toFloat) :: entities
 	case currencyRegexp(factor, comment) =>
-	  Currency(factor.toFloat) :: entities
+	  Currency(factor.replace(',','.').toFloat) :: entities
 	case other =>
 	  entities
       }
