@@ -19,28 +19,30 @@ object Evensteven {
 	case billRegexp(name) =>
 	  Bill(name) :: entities
 	case splitRegexp(kind, amount, splitters, comment) =>
-	  val splitSplitters = splitters.split(",").map(_.trim).toList
+	  val splitSplitters = splitters.split(",").map(parseName(_)).toList
 	  val (prefix, head :: tail) = entities.span(!_.isInstanceOf[Bill])
 	  val bill = head.asInstanceOf[Bill]
 	  val newBill =
 	  kind match {
 	    case "" =>
-	      bill.copy(split = Some(Split(splitSplitters, -amount.replace(',','.').toFloat)))
+	      bill.copy(split = Some(Split(splitSplitters, -parseFloat(amount))))
 	    case "-" =>
-	      bill.copy(subSplits = Split(splitSplitters, -amount.replace(',','.').toFloat) :: bill.subSplits)
+	      bill.copy(subSplits = Split(splitSplitters, -parseFloat(amount)) :: bill.subSplits)
 	    case "+" =>
-	      bill.copy(payments = Split(splitSplitters, amount.replace(',','.').toFloat) :: bill.payments)
+	      bill.copy(payments = Split(splitSplitters, parseFloat(amount)) :: bill.payments)
 	  }
 	  prefix ++ (newBill :: tail)
 	case transferRegexp(amount, from, to, comment) =>
-	  Transfer(from, to, amount.replace(',','.').toFloat) :: entities
+	  Transfer(from, to, parseFloat(amount)) :: entities
 	case currencyRegexp(factor, comment) =>
-	  Currency(factor.replace(',','.').toFloat) :: entities
+	  Currency(parseFloat(factor)) :: entities
 	case other =>
 	  entities
       }
     }.reverse
   }
+  private def parseName(s: String) = s.trim.toLowerCase.capitalize
+  private def parseFloat(s: String) = s.trim.replace(',', '.').toFloat
 }
 
 case class Result(res : Map[String, Float] = Map(), currency : Float = 1) {
