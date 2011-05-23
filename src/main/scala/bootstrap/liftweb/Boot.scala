@@ -36,6 +36,11 @@ class Boot {
 
     Schemifier.schemify(true, Schemifier.infoF _, Event)
 
+    LiftRules.statelessRewrite.append {
+      case RewriteRequest(ParsePath(List("event", eventName), _, _, _), _, _) =>
+	      RewriteResponse("index" :: Nil, Map("eventName" -> urlDecode(eventName)))
+    }
+
     // Build SiteMap
     val entries = List(
       Menu.i("Home") / "index", // the simple way to declare a menu
