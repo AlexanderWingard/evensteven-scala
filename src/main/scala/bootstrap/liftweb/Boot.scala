@@ -8,6 +8,9 @@ import common._
 import http._
 import sitemap._
 import Loc._
+import mapper._
+
+import code.model._
 
 
 /**
@@ -19,13 +22,27 @@ class Boot {
     // where to search snippet
     LiftRules.addToPackages("code")
 
+    if (!DB.jndiJdbcConnAvailable_?) {
+      val vendor =
+	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
+			     Props.get("db.url") openOr
+			     "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
+			     Props.get("db.user"), Props.get("db.password"))
+
+      LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
+
+      DB.defineConnectionManager(DefaultConnectionIdentifier, vendor)
+    }
+
+    Schemifier.schemify(true, Schemifier.infoF _, Event)
+
     // Build SiteMap
     val entries = List(
       Menu.i("Home") / "index", // the simple way to declare a menu
 
       // more complex because this menu allows anything in the
       // /static path to be visible
-      Menu(Loc("Static", Link(List("static"), true, "/static/index"), 
+      Menu(Loc("Static", Link(List("static"), true, "/static/index"),
 	       "Static Content")))
 
     // set the sitemap.  Note if you don't want access control for
@@ -38,7 +55,7 @@ class Boot {
     //Show the spinny image when an Ajax call starts
     LiftRules.ajaxStart =
       Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
-    
+
     // Make the spinny image go away when it ends
     LiftRules.ajaxEnd =
       Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
