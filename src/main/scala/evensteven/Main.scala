@@ -33,7 +33,7 @@ object Evensteven {
 	  }
 	  prefix ++ (newBill :: tail)
 	case transferRegexp(amount, from, to, comment) =>
-	  Transfer(from, to, parseFloat(amount)) :: entities
+	  Transfer(parseName(from), parseName(to), parseFloat(amount)) :: entities
 	case currencyRegexp(factor, comment) =>
 	  Currency(parseFloat(factor)) :: entities
 	case other =>

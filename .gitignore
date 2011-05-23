@@ -3,3 +3,4 @@
 project/boot/
 target/
 lib_managed/
+.DS_Store
