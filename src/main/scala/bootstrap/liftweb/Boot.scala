@@ -38,7 +38,7 @@ class Boot {
 
     LiftRules.statelessRewrite.append {
       case RewriteRequest(ParsePath(List("event", eventName), _, _, _), _, _) =>
-	      RewriteResponse("event" :: Nil, Map("eventName" -> urlDecode(eventName)))
+	      RewriteResponse("event" :: Nil, Map("eventName" -> urlDecode(eventName).toLowerCase()))
     }
 
     // Build SiteMap
