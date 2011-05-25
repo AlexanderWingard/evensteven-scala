@@ -38,7 +38,7 @@ class Boot {
 
     LiftRules.statelessRewrite.append {
       case RewriteRequest(ParsePath(List("event", eventName), _, _, _), _, _) =>
-	      RewriteResponse("index" :: Nil, Map("eventName" -> urlDecode(eventName)))
+	      RewriteResponse("event" :: Nil, Map("eventName" -> urlDecode(eventName)))
     }
 
     // Build SiteMap
@@ -52,7 +52,7 @@ class Boot {
 
     // set the sitemap.  Note if you don't want access control for
     // each page, just comment this line out.
-    LiftRules.setSiteMap(SiteMap(entries:_*))
+    //LiftRules.setSiteMap(SiteMap(entries:_*))
 
     // Use jQuery 1.4
     LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
