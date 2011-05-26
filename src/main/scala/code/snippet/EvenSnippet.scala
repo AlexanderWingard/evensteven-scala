@@ -7,7 +7,14 @@ import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import net.liftweb.common._
 
+import net.liftweb.mapper._
+import model.Event
+
 object EvenSnippet extends DispatchSnippet {
+  val exampleEvent = """
+* First bill
+"""
+
   def dispatch = {
     case "goToEvent" => form _
     case "showEvent" => event _
@@ -25,7 +32,12 @@ object EvenSnippet extends DispatchSnippet {
   def event(xhtml : NodeSeq) : NodeSeq = {
     S.param("eventName") match {
       case Full(s) if s.length > 0 && s != "index" =>
-	Text("hello")
+	Event.find(By(Event.name, s)) match {
+	  case Full(event) =>
+	    Text(event.data.is)
+	  case _ =>
+	    Text(exampleEvent)
+	}
       case _ =>
 	S.redirectTo("/")
     }
