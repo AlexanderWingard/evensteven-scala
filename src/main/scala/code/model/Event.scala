@@ -10,7 +10,7 @@ class Event extends LongKeyedMapper[Event] with IdPK {
   def getSingleton = Event
 
   object name extends MappedString(this, 50) 
-  object data extends MappedTextarea(this, 1000)
+  object data extends MappedText(this)
   object saveDate extends MappedDateTime(this)
 }
 
