@@ -34,9 +34,8 @@ object EvenJsonHandler extends SessionVar[JsonHandler] (
     implicit val formats = Serialization.formats(NoTypeHints)
 
     def apply(in : Any) : JsCmd = in match {
-      case JsonCmd("sendEven", resp, XString(s), _) =>
-	val result = Evensteven.parse(Source.fromString(s)).foldLeft(Result())(_ + _)
-      val eventName = "bali" //S.param("eventName").openTheBox
+      case JsonCmd("sendEven", resp, List(XString(eventName), XString(s)), _) =>
+      val result = Evensteven.parse(Source.fromString(s)).foldLeft(Result())(_ + _)
       val event = Event.find(By(Event.name, eventName)).openOr(Event.create.name(eventName))
       event.data(s).save
       Call(resp, write(result.localRes))

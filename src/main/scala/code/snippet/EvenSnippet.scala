@@ -18,6 +18,7 @@ object EvenSnippet extends DispatchSnippet {
   def dispatch = {
     case "goToEvent" => form _
     case "showEvent" => event _
+    case "eventName" => eventName _
   }
 
   def form(xhtml : NodeSeq) : NodeSeq = {
@@ -27,6 +28,15 @@ object EvenSnippet extends DispatchSnippet {
     bind("f", xhtml, 
 	 "eventName" -> SHtml.text(name, name = _),
 	 "go" -> SHtml.submit("Go", go))
+  }
+
+  def eventName(xhtml: NodeSeq) : NodeSeq = {
+    S.param("eventName") match {
+      case Full(s) if s.length > 0 && s != "index" =>
+	Text(s)
+      case _ =>
+	xhtml
+    }
   }
 
   def event(xhtml : NodeSeq) : NodeSeq = {

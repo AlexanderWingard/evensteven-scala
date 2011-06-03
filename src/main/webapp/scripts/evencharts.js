@@ -16,7 +16,7 @@ $(document).ready(function() {
    });
 
 function callSendEven() {
-    sendEven("sendEvenCallback", $("#input").val())
+    sendEven("sendEvenCallback", [$("#eventname").html(), $("#input").val()])
 }
 
 function sendEvenCallback(result) {
